@@ -1,4 +1,4 @@
-FFROM mariadb:latest
+FROM mariadb:latest
 
 # Configurar variables de entorno con valores fijos 
 ENV MARIADB_ROOT_PASSWORD=P0l1t3cn1c4C3ntr0
