@@ -147,6 +147,9 @@ SELECT r.id_rol, p.id_permission
 FROM roles r, permissions p
 WHERE r.name = 'DEV';
 
--- Otorgar permisos al usuario de la aplicación (opcional)
-GRANT ALL PRIVILEGES ON ordenamiento.* TO 'root'@'%';
+-- No es necesario otorgar permisos al usuario root ya que MariaDB lo hace automáticamente
+-- cuando se establece MARIADB_ROOT_PASSWORD
+-- Si quieres crear un usuario adicional, puedes hacerlo así:
+-- CREATE USER IF NOT EXISTS 'app_user'@'%' IDENTIFIED BY 'app_password';
+-- GRANT ALL PRIVILEGES ON ordenamiento.* TO 'app_user'@'%';
 FLUSH PRIVILEGES;
