@@ -3,8 +3,28 @@
 # Iniciar MariaDB en segundo plano
 docker-entrypoint.sh mysqld &
 
-# Iniciar un servidor web simple que responda en el puerto 10000 (o el que prefieras)
-# Esto es solo para que Render pueda detectar un puerto abierto
-while true; do
-    { echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nMariaDB is running"; } | nc -l -p 10000
-done
+# Obtener el puerto de la variable de entorno PORT o usar 8080 por defecto
+PORT=${PORT:-8080}
+echo "Iniciando servidor web en puerto $PORT"
+
+# Crear un servidor web simple con Python en lugar de netcat
+cat > /server.py << EOL
+import http.server
+import socketserver
+from http import HTTPStatus
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"MariaDB is running")
+
+port = $PORT
+httpd = socketserver.TCPServer(("", port), Handler)
+print("Servidor web escuchando en puerto", port)
+httpd.serve_forever()
+EOL
+
+# Ejecutar el servidor web
+python3 /server.py
