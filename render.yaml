@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mariadb-service
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
+    # Especificar el puerto HTTP que Render debe buscar
+    port: 10000
