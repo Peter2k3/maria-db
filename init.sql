@@ -1,5 +1,8 @@
--- ordenamiento.estados definition
+-- Crear y usar la base de datos
+-- No necesitamos crear la BD porque MariaDB lo hace automáticamente con MARIADB_DATABASE
 USE ordenamiento;
+
+-- ordenamiento.estados definition
 CREATE TABLE `estados` (
   `cve_estados` int(11) NOT NULL AUTO_INCREMENT,
   `abreviatura` varchar(20) DEFAULT NULL,
@@ -11,9 +14,7 @@ CREATE TABLE `estados` (
   PRIMARY KEY (`cve_estados`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.permissions definition
-
 CREATE TABLE `permissions` (
   `id_permission` bigint(20) NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
@@ -23,9 +24,7 @@ CREATE TABLE `permissions` (
   PRIMARY KEY (`id_permission`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.roles definition
-
 CREATE TABLE `roles` (
   `id_rol` bigint(20) NOT NULL AUTO_INCREMENT,
   `description` varchar(100) DEFAULT NULL,
@@ -34,9 +33,7 @@ CREATE TABLE `roles` (
   UNIQUE KEY `UKofx66keruapi6vyqpv6f2or37` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.tipos_localidades definition
-
 CREATE TABLE `tipos_localidades` (
   `cve_tipos_localidades` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(40) DEFAULT NULL,
@@ -44,9 +41,7 @@ CREATE TABLE `tipos_localidades` (
   PRIMARY KEY (`cve_tipos_localidades`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.users definition
-
 CREATE TABLE `users` (
   `id_user` bigint(20) NOT NULL AUTO_INCREMENT,
   `active` bit(1) DEFAULT NULL,
@@ -63,9 +58,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.municipios definition
-
 CREATE TABLE `municipios` (
   `cve_municipios` int(11) NOT NULL AUTO_INCREMENT,
   `abreviatura` varchar(255) DEFAULT NULL,
@@ -80,9 +73,7 @@ CREATE TABLE `municipios` (
   CONSTRAINT `FKqpta3cd5abhcmwyq3rqjvs247` FOREIGN KEY (`cve_estados`) REFERENCES `estados` (`cve_estados`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.roles_permissions definition
-
 CREATE TABLE `roles_permissions` (
   `id_rol` bigint(20) NOT NULL,
   `id_permission` bigint(20) NOT NULL,
@@ -92,9 +83,7 @@ CREATE TABLE `roles_permissions` (
   CONSTRAINT `FKby1b1c1bitxjxhgh6wveltjo7` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id_rol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.users_roles definition
-
 CREATE TABLE `users_roles` (
   `id_user` bigint(20) NOT NULL,
   `id_rol` bigint(20) NOT NULL,
@@ -104,9 +93,7 @@ CREATE TABLE `users_roles` (
   CONSTRAINT `FKaulyi2lejh5cckb2y8e2mlpud` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id_rol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 -- ordenamiento.localidades definition
-
 CREATE TABLE `localidades` (
   `cve_localidades` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) DEFAULT NULL,
@@ -123,7 +110,8 @@ CREATE TABLE `localidades` (
   CONSTRAINT `FKoltkjbwyofsnurhblbw0h78id` FOREIGN KEY (`cve_estados`) REFERENCES `estados` (`cve_estados`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
- INSERT INTO permissions (name, description, resourse, operation) VALUES
+-- Insertar los datos de permisos
+INSERT INTO permissions (name, description, resourse, operation) VALUES
 -- ESTADOS
 ('CREAR_ESTADO', 'Crear estado', 'estados', 'CREAR'),
 ('VER_ESTADO', 'Ver estados', 'estados', 'VER'),
@@ -142,11 +130,12 @@ CREATE TABLE `localidades` (
 ('ACTUALIZAR_LOCALIDAD', 'Actualizar localidad', 'localidades', 'ACTUALIZAR'),
 ('ELIMINAR_LOCALIDAD', 'Eliminar localidad', 'localidades', 'ELIMINAR');
 
+-- Insertar roles
 INSERT INTO roles (name, description) VALUES
   ('ADMIN', 'Administrador del sistema con todos los privilegios'),
   ('DEV', 'Desarrollador con acceso completo a todas las operaciones');
 
- -- Asignar todos los permisos a ADMIN
+-- Asignar todos los permisos a ADMIN
 INSERT INTO roles_permissions (id_rol, id_permission)
 SELECT r.id_rol, p.id_permission
 FROM roles r, permissions p
@@ -157,3 +146,7 @@ INSERT INTO roles_permissions (id_rol, id_permission)
 SELECT r.id_rol, p.id_permission
 FROM roles r, permissions p
 WHERE r.name = 'DEV';
+
+-- Otorgar permisos al usuario de la aplicación (opcional)
+GRANT ALL PRIVILEGES ON ordenamiento.* TO 'root'@'%';
+FLUSH PRIVILEGES;
