@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Iniciar MariaDB en segundo plano
-docker-entrypoint.sh mysqld &
-
 # Obtener el puerto de la variable de entorno PORT o usar 8080 por defecto
 PORT=${PORT:-8080}
 echo "Iniciando servidor web en puerto $PORT"
 
-# Crear un servidor web simple con Python en lugar de netcat
+# Crear un servidor web simple con Python
 cat > /server.py << EOL
 import http.server
 import socketserver
@@ -26,5 +23,9 @@ print("Servidor web escuchando en puerto", port)
 httpd.serve_forever()
 EOL
 
-# Ejecutar el servidor web
-python3 /server.py
+# Iniciar el servidor web en segundo plano
+python3 /server.py &
+
+# Iniciar MariaDB como proceso principal
+exec docker-entrypoint.sh mysqld
+
